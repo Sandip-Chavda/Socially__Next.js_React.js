@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+provider = "prisma-client-js"
+}
+
+datasource db {
+provider = "mongodb"
+url = env("DATABASE_URL")
+}
+
+
+
+model User {
+id String @id @default(auto()) @map("_id") @db.ObjectId // MongoDB uses auto-generated ObjectId as the default primary key
+email String @unique
+username String @unique
+clerkId String @unique
+name String?
+bio String?
+image String?
+location String?
+website String?
+createdAt DateTime @default(now()) // member since 2020
+updatedAt DateTime @updatedAt
+
+// Relations:
+posts Post[] // One-to-many
+comments Comment[] // One-to-many
+likes Like[] // One-to-many
+
+followers Follows[] @relation("following") // users who follow this user
+following Follows[] @relation("follower") // users this user follows
+
+notifications Notification[] @relation("userNotifications") // notifications received by a user
+notificationsCreated Notification[] @relation("notificationCreator") // notifications triggered by a user
+}
+
+model Post {
+id String @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
+authorId String @db.ObjectId // Added @db.ObjectId to match User.id
+content String?
+image String?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+
+// Relations
+author User @relation(fields: [authorId], references: [id], onDelete: Cascade) // Cascade delete means delete all posts if author is deleted
+comments Comment[]
+likes Like[]
+notifications Notification[]
+}
+
+
+model Comment {
+id String @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
+content String
+authorId String @db.ObjectId // Added @db.ObjectId to match User.id
+postId String @db.ObjectId // Added @db.ObjectId to match Post.id
+createdAt DateTime @default(now())
+
+// Relations
+author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+notifications Notification[]
+
+@@index([authorId, postId]) // composite index for faster queries
+// @@unique([authorId,postId])
+}
+
+
+model Like {
+id String @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
+postId String @db.ObjectId // Added @db.ObjectId to match Post.id
+userId String @db.ObjectId // Added @db.ObjectId to match User.id
+createdAt DateTime @default(now())
+
+// Relations
+user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+@@index([userId, postId]) // composite index for faster queries
+// @@unique([userId,postId])
+}
+
+
+model Follows {
+id String @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId as the primary key
+followerId String @db.ObjectId // Added @db.ObjectId to match User.id
+followingId String @db.ObjectId // Added @db.ObjectId to match User.id
+createdAt DateTime @default(now())
+
+// Relations
+follower User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+@@unique([followerId, followingId]) // Composite unique key to ensure no duplicate follow relationships
+}
+
+
+model Notification {
+id String @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
+userId String @db.ObjectId // Added @db.ObjectId to match User.id
+creatorId String @db.ObjectId // Added @db.ObjectId to match User.id
+type NotificationType
+read Boolean @default(false)
+postId String? @db.ObjectId // Added @db.ObjectId to match Post.id
+commentId String? @db.ObjectId // Added @db.ObjectId to match Comment.id
+createdAt DateTime @default(now())
+
+// Relations
+user User @relation("userNotifications", fields: [userId], references: [id], onDelete: Cascade)
+creator User @relation("notificationCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+comment Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+@@index([userId, createdAt])
+}
+
+enum NotificationType {
+LIKE  
+ COMMENT
+FOLLOW  
+}

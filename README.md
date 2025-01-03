@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# POSTGRESQL SCHEMA
 
-## Getting Started
+// model User {
+// id String @id @default(cuid())
+// email String @unique
+// username String @unique
+// clerkId String @unique
+// name String?
+// bio String?
+// image String?
+// location String?
+// website String?
+// createdAt DateTime @default(now()) // member since 2020
+// updatedAt DateTime @updatedAt
 
-First, run the development server:
+// // Relations:
+// posts Post[] // One-to-many
+// comments Comment[] // One-to-many
+// likes Like[] // One-to-many
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+// followers Follows[] @relation("following") // users who follow this user
+// following Follows[] @relation("follower") // users this user follows
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+// notifications Notification[] @relation("userNotifications") // notifications received by a user
+// notificationsCreated Notification[] @relation("notificationCreator") // notifications triggered by a user
+// }
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+// model Post{
+// id String @id @default(cuid())
+// authorId String
+// content String?
+// image String?
+// createdAt DateTime @default(now())
+// updatedAt DateTime @updatedAt
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+// // Relations
+// author User @relation(fields: [authorId],references: [id], onDelete: Cascade) // cascade delete means delete all posts if author is deleted
+// comments Comment[]
+// likes Like[]
+// notifications Notification[]
+// }
 
-## Learn More
+// model Comment{
+// id String @id @default(cuid())
+// content String
+// authorId String
+// postId String
+// createdAt DateTime @default(now())
 
-To learn more about Next.js, take a look at the following resources:
+// // Relations
+// author User @relation(fields: [authorId],references: [id],onDelete: Cascade)
+// post Post @relation(fields: [postId],references: [id], onDelete: Cascade)
+// notifications Notification[]
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+// @@index([authorId,postId]) // composite index for faster queries
+// }
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+// model Like {
+// id String @id @default(cuid())
+// postId String  
+// userId String  
+// createdAt DateTime @default(now())
 
-## Deploy on Vercel
+// // Relations
+// user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+// post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+// @@index([userId,postId]) // composite index for faster queries
+// @@unique([userId,postId]) // this prevents same user liking post twice
+// }
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+// model Follows{
+// followerId String
+// followingId String
+// createdAt DateTime @default(now())
+
+// // Relations
+// follower User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+// following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+// @@index([followerId,followingId]) // composite index for faster queries
+// @@id([followerId, followingId]) // composite primary key prevents duplicate follows
+// }
+
+// model Notification {
+// id String @id @default(cuid())
+// userId String  
+// creatorId String  
+// type NotificationType  
+// read Boolean @default(false)
+// postId String?  
+// commentId String?  
+// createdAt DateTime @default(now())
+
+// // Relations
+// user User @relation("userNotifications", fields: [userId], references: [id], onDelete: Cascade)
+// creator User @relation("notificationCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+// post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+// comment Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+// @@index([userId, createdAt])
+// }
+
+// enum NotificationType {
+// LIKE  
+// COMMENT
+// FOLLOW  
+// }
