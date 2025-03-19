@@ -2,9 +2,9 @@
 
 - **Socially 🪬📫** is a modern, fully-featured social media platform inspired by Instagram, built with React.js, Next.js, Node.js, Express.js, and MongoDB (using Prisma ORM). It allows users to explore posts, comments, and profiles without logging in, while authenticated users can upload posts, like, comment, follow, and unfollow others. The app also includes a real-time notification system to keep users updated on likes, comments, and new followers.
 
-With Clerk for authentication, Uploadthing for asset storage, and Next Themes & Tailwind CSS for styling (including light/dark mode), Socially delivers a sleek, responsive, and user-friendly experience across all devices.
+- With Clerk for authentication, Uploadthing for asset storage, and Next Themes & Tailwind CSS for styling (including light/dark mode), Socially delivers a sleek, responsive, and user-friendly experience across all devices.
 
-## Connect me on 🌐:
+## Connect with me on 🌐:
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/sandip-chavda-86704a2aa) [![X](https://img.shields.io/badge/X-black.svg?logo=X&logoColor=white)](https://x.com/@SandipC70731202)
 
@@ -12,19 +12,21 @@ With Clerk for authentication, Uploadthing for asset storage, and Next Themes & 
 
 - ## Video
 
+https://github.com/user-attachments/assets/3b9c24c6-82c1-4399-a8e9-e4b7f1ce58a9
+
 - ## Images
 
 | Home Page | Home Page | Ligh Mode Home Page |
 | --------- | --------- | ------------------- |
-|           |           |                     |
+| ![HomePage](https://github.com/user-attachments/assets/1ae24a44-0aa2-48dd-8cc4-8c918b7e7954) | ![Home Page](https://github.com/user-attachments/assets/29e5d1f2-0d14-4595-aa69-1840bc12ddfe)  | ![Light Mode](https://github.com/user-attachments/assets/aee65e6c-1890-4c84-9840-b4293412b962) |
 
 | Login & Register Page | Profile Page | Notifications Page |
 | --------------------- | ------------ | ------------------ |
-|                       |              |                    |
+| ![Login   Register](https://github.com/user-attachments/assets/3fb21c97-7395-4237-b22d-e5e99ba80691) | ![Profile Page](https://github.com/user-attachments/assets/96063658-409f-4fb8-a753-41c506a7df16) | ![Edit Profile Page](https://github.com/user-attachments/assets/ab30176f-a8dd-4cf2-8643-f775de527ae8)  |
 
-| Edit Profile Page |
-| ----------------- |
-|                   |
+| Edit Profile Page | Blank | Blank |
+| ----------------- | ------| ----- |
+| ![Notification Page](https://github.com/user-attachments/assets/6e08b360-0ce6-478a-994d-68e23e9c5729) | | |
 
 ## Key Features
 
@@ -183,9 +185,7 @@ enum NotificationType {
 LIKE
 COMMENT
 FOLLOW
-}
-
-````
+}````
 
 </details>
 
